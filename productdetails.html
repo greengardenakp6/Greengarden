@@ -53,6 +53,40 @@
             color: var(--primary);
             letter-spacing: 0.5px;
         }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--secondary);
+            border-radius: 30px;
+            padding: 0.5rem 1rem;
+            transition: var(--transition);
+        }
+
+        .search-bar:focus-within {
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+
+        .search-bar input {
+            border: none;
+            outline: none;
+            background: transparent;
+            padding: 0.5rem;
+            width: 200px;
+            font-size: 0.9rem;
+        }
+
+        .search-bar button {
+            border: none;
+            background: transparent;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .search-bar button:hover {
+            color: var(--primary);
+        }
 
         .back-button {
             position: absolute;
