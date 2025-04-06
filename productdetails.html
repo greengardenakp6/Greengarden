@@ -468,44 +468,96 @@
         card.style.display = (title.includes(searchTerm) || category.includes(searchTerm)) ? 'block' : 'none';
     });
 }
-    function getCart() {
+    // Utility function to parse product ID from URL
+function getProductIdFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('id');
+}
+
+function getCart() {
+    try {
         return JSON.parse(localStorage.getItem('cart')) || [];
+    } catch (error) {
+        console.error('Error reading cart:', error);
+        return [];
     }
+}
 
-    function saveCart(cart) {
-        localStorage.setItem('cart', JSON.stringify(cart));
+function saveCart(cart) {
+    localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+// Enhanced add to cart function
+async function addToCart() {
+    try {
+        const productId = getProductIdFromUrl();
+        const quantityInput = document.getElementById('quantity');
+        const quantity = parseInt(quantityInput.value);
+
+        // Input validation
+        if (!productId) {
+            throw new Error('Product ID not found in URL');
+        }
+        
+        if (isNaN(quantity) {
+            throw new Error('Please enter a valid quantity');
+        }
+
+        if (quantity < 1 || quantity > 100) { // Adjust max quantity as needed
+            throw new Error('Quantity must be between 1 and 100');
+        }
+
+        // In real implementation, you'd fetch product details from your API
+        const product = products.find(p => p.id === productId);
+        if (!product) {
+            throw new Error('Product not found');
+        }
+
+        // Stock check (if implemented in your system)
+        if (product.stock < quantity) {
+            throw new Error(`Only ${product.stock} items available in stock`);
+        }
+
+        const cart = getCart();
+        const existingItem = cart.find(item => item.productId === productId);
+
+        if (existingItem) {
+            // Check combined quantity
+            if (product.stock && (existingItem.quantity + quantity) > product.stock) {
+                throw new Error(`Cannot add more than ${product.stock} items total`);
+            }
+            existingItem.quantity += quantity;
+        } else {
+            cart.push({
+                productId: productId,
+                name: product.name,
+                price: product.price,
+                image: product.image,
+                quantity: quantity,
+                addedAt: new Date().toISOString()
+            });
+        }
+
+        saveCart(cart);
+        showSuccessMessage('Item added to cart!'); // Implement UI notification
+        setTimeout(() => {
+            window.location.href = 'cart.html';
+        }, 1500); // Delay redirect to allow user to see message
+
+    } catch (error) {
+        showErrorMessage(error.message); // Implement error UI
+        console.error('Add to cart error:', error);
     }
+}
 
-    function addToCart() {
-    const productId = getProductIdFromUrl();
-    const quantity = parseInt(document.getElementById('quantity').value);
-    const product = products.find(p => p.id === productId);
+// Example UI notification functions (implement with your preferred UI)
+function showSuccessMessage(message) {
+    alert(message); // Replace with modal/toast in production
+}
 
-    if (!product) {
-        alert('Product not found!');
-        return;
-    }
-
-    const cart = getCart();
-    const existingItem = cart.find(item => item.productId === productId);
-
-    if (existingItem) {
-        existingItem.quantity += quantity;
-    } else {
-        cart.push({
-            productId: productId,
-            name: product.name,
-            price: product.price,
-            image: product.image,
-            quantity: quantity,
-            addedAt: new Date().toISOString()
-        });
-    }
-
-    saveCart(cart);
-    alert('Item added to cart successfully!');
-    window.location.href = 'cart.html'; // Moved after alert
-    }
+function showErrorMessage(message) {
+    alert(message); // Replace with modal/toast in production
+}
 </script>
 </body>
 
