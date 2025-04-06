@@ -451,7 +451,6 @@
         document.getElementById("product-price").textContent = product.price;
     }
 
-    // Quantity control functions
     function updateQuantity(delta) {
         const quantityInput = document.getElementById('quantity');
         let quantity = parseInt(quantityInput.value) || 1;
@@ -478,45 +477,35 @@
     }
 
     function addToCart() {
-        const productId = getProductIdFromUrl();
-        const quantity = parseInt(document.getElementById('quantity').value);
-        const cart = getCart();
-        const existingItem = cart.find(item => item.productId === productId);
-        
-        if (existingItem) {
-            existingItem.quantity += quantity;
-        } else {
-            cart.push({
-                productId: productId,
-                quantity: quantity,
-                addedAt: new Date().toISOString()
-            });
-        }
-        
-        saveCart(cart);
-        window.location.href = 'cart.html';
-        alert('Item added to cart successfully!');
+    const productId = getProductIdFromUrl();
+    const quantity = parseInt(document.getElementById('quantity').value);
+    const product = products.find(p => p.id === productId);
+
+    if (!product) {
+        alert('Product not found!');
+        return;
     }
 
-    function buyNow() {
-        const productId = getProductIdFromUrl();
-        const quantity = parseInt(document.getElementById('quantity').value);
-        
-        const order = {
-            items: [{
-                productId: productId,
-                quantity: quantity
-            }],
-            total: products.find(p => p.id === productId).price.replace('₹', '') * quantity
-        };
-        localStorage.setItem('tempOrder', JSON.stringify(order));
-        window.location.href = 'buy.html';
+    const cart = getCart();
+    const existingItem = cart.find(item => item.productId === productId);
+
+    if (existingItem) {
+        existingItem.quantity += quantity;
+    } else {
+        cart.push({
+            productId: productId,
+            name: product.name,
+            price: product.price,
+            image: product.image,
+            quantity: quantity,
+            addedAt: new Date().toISOString()
+        });
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        displayProductDetails();
-        updateQuantity(0); 
-    });
+    saveCart(cart);
+    alert('Item added to cart successfully!');
+    window.location.href = 'cart.html'; // Moved after alert
+    }
 </script>
 </body>
 
