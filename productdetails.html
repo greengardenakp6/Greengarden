@@ -460,13 +460,13 @@
         return parseInt(params.get("id"));
     }
 
-    // Display product details on page load
+  
     function displayProductDetails() {
         const productId = getProductIdFromUrl();
         const product = products.find(p => p.id === productId);
         
         if (!product) {
-            window.location.href = 'products.html'; // Redirect if product not found
+            window.location.href = 'products.html'; 
             return;
         }
 
@@ -482,12 +482,17 @@
         quantity = Math.max(1, Math.min(99, quantity + delta));
         quantityInput.value = quantity;
         
-        // Update button states
         document.querySelector('.minus').disabled = quantity <= 1;
         document.querySelector('.plus').disabled = quantity >= 99;
     }
 
-    // Cart management functions
+    function filterProducts(searchTerm) {
+    document.querySelectorAll('.product-card').forEach(card => {
+        const title = card.querySelector('.product-title').textContent.toLowerCase();
+        const category = card.querySelector('.product-category').textContent.toLowerCase();
+        card.style.display = (title.includes(searchTerm) || category.includes(searchTerm)) ? 'block' : 'none';
+    });
+}
     function getCart() {
         return JSON.parse(localStorage.getItem('cart')) || [];
     }
@@ -500,8 +505,6 @@
         const productId = getProductIdFromUrl();
         const quantity = parseInt(document.getElementById('quantity').value);
         const cart = getCart();
-        
-        // Find existing item in cart
         const existingItem = cart.find(item => item.productId === productId);
         
         if (existingItem) {
@@ -522,7 +525,6 @@
         const productId = getProductIdFromUrl();
         const quantity = parseInt(document.getElementById('quantity').value);
         
-        // Create temporary order object
         const order = {
             items: [{
                 productId: productId,
@@ -530,17 +532,13 @@
             }],
             total: products.find(p => p.id === productId).price.replace('₹', '') * quantity
         };
-        
-        // Store temporary order and redirect
         localStorage.setItem('tempOrder', JSON.stringify(order));
         window.location.href = 'buy.html';
     }
 
-    // Initialize page
     document.addEventListener('DOMContentLoaded', () => {
         displayProductDetails();
-        // Initialize quantity buttons state
-        updateQuantity(0); // Sets ini
+        updateQuantity(0); 
     });
 </script>
 </body>
